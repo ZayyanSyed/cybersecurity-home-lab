@@ -1,0 +1,7 @@
+﻿*.log
+*password*
+*secret*
+*.pfx
+*.key
+.DS_Store
+Thumbs.db
