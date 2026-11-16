@@ -1,3 +1,46 @@
+# Cybersecurity Home Lab: AD Monitoring & Brute-Force Detection
+
+A self-built lab simulating a small company network, instrumented for security 
+monitoring, used to demonstrate log analysis and incident detection skills.
+
+## Goal
+
+Build an isolated Active Directory network, monitor it with Sysmon and Splunk, 
+simulate a brute-force attack, detect it, and document the investigation.
+
+## Architecture
+
+| Machine | Role | OS |
+|---|---|---|
+| DC01 | Domain Controller (corp.local) | Windows Server 2022 |
+| WIN11-CLIENT | Employee workstation | Windows 11 Pro |
+| SPLUNK | SIEM / log server | Ubuntu Server 22.04 |
+| Kali | Attacker machine | Kali Linux |
+
+All machines run on an isolated host-only network (VMnet1, 192.168.111.0/24), 
+with no route to the internet from the lab subnet itself.
+
+## What's Built
+
+- Active Directory domain `corp.local` with OU structure (IT, Finance, Sales) 
+  and 36 user accounts
+- Sysmon deployed on DC01 and WIN11-CLIENT using the SwiftOnSecurity baseline config
+- Splunk Enterprise deployed as a dedicated SIEM, receiving forwarded logs 
+  from both Windows hosts via Splunk Universal Forwarder
+- Verified log ingestion: Security Event Log and Sysmon Operational log, 
+  both hosts, both indexes
+
+![AD structure and user accounts](screenshots/02-ad-users-ou.png)
+![Log ingestion confirmed across both hosts](screenshots/07-log-ingestion-confirmed.png)
+
+## Attack Simulation: Brute-Force Against a Domain Account
+
+A controlled brute-force attack was run from Kali against the domain account 
+`j.smith`, targeting RDP on DC01, using a 5-entry wordlist (4 wrong 
+passwords, then the correct one).
+
+hydra -l j.smith -P passwords.txt rdp://192.168.111.10 -t 1 -V -f
+
 
 ![Hydra successful attack run](screenshots/08-hydra-successful-attack.png)
 
